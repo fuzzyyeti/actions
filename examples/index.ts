@@ -1,6 +1,4 @@
 import { serve } from '@hono/node-server';
-import donate from './donate/route';
-import jupiterSwap from './jupiter-swap/route';
 import theVault from './the-vault/route';
 import { cors } from 'hono/cors';
 import { swaggerUI } from '@hono/swagger-ui';
@@ -15,8 +13,6 @@ console.log(process.env.ENVIRONMENT);
 console.log(process.env.RPC_URL);
 
 // <--Actions-->
-app.route('/api/donate', donate);
-app.route('/api/jupiter/swap', jupiterSwap);
 app.route('/api/thevault/stake', theVault);
 // </--Actions-->
 
