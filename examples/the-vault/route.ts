@@ -126,8 +126,6 @@ app.openapi(
 
     const parsedAmount = parseFloat(amount);
     const payerKey = new PublicKey(account);
-    console.log("stake pool acount", STAKE_POOL);
-    console.log("rpc", connection.rpcEndpoint)
     const {instructions } = await depositSol(
       connection,
       new PublicKey(STAKE_POOL),
