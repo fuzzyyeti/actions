@@ -163,11 +163,10 @@ function getStakeInfo(): Pick<
   ActionsSpecGetResponse,
   'icon' | 'title' | 'description'
 > {
-  const icon =
-    'https://thevault.finance/favicon.png';
+  const icon = 'https://solanavault.s3.amazonaws.com/vSolBanner.webp'
   const title = 'Stake to The Vault';
   const description =
-    'vSOL is a stake pool that supports community-focused validators. Stake with us now to support the Solana native communities!';
+    'The LST of The Vault Finance, the growth focused stake pool.';
   return { icon, title, description };
 }
 
