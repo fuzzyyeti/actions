@@ -1,7 +1,7 @@
 import {
   LAMPORTS_PER_SOL, MessageV0,
   PublicKey,
-  SystemProgram, TransactionMessage,
+  SystemProgram, TransactionInstruction, TransactionMessage,
   VersionedTransaction,
 } from '@solana/web3.js';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
@@ -11,6 +11,7 @@ import {
   actionsSpecOpenApiPostResponse,
 } from '../openapi';
 import {
+  ActionError,
   ActionsSpecGetResponse,
   ActionsSpecPostRequestBody,
   ActionsSpecPostResponse,
@@ -32,7 +33,7 @@ app.openapi(
     responses: actionsSpecOpenApiGetResponse,
   }),
   (c) => {
-    const { icon, title, description } = getDonateInfo();
+    const { icon, title, description } = getStakeInfo();
     const amountParameterName = 'amount';
     const response: ActionsSpecGetResponse = {
       icon,
@@ -84,7 +85,7 @@ app.openapi(
   }),
   (c) => {
     const amount = c.req.param('amount');
-    const { icon, title, description } = getDonateInfo();
+    const { icon, title, description } = getStakeInfo();
     const response: ActionsSpecGetResponse = {
       icon,
       label: `${amount} SOL`,
@@ -94,6 +95,7 @@ app.openapi(
     return c.json(response, 200);
   },
 );
+
 
 app.openapi(
   createRoute({
@@ -123,30 +125,40 @@ app.openapi(
     const amount =
       c.req.param('amount') ?? DEFAULT_STAKE_AMOUNT.toString();
     const { account } = (await c.req.json()) as ActionsSpecPostRequestBody;
-
     const parsedAmount = parseFloat(amount);
     const payerKey = new PublicKey(account);
-    const {instructions } = await depositSol(
-      connection,
-      new PublicKey(STAKE_POOL),
-      payerKey,
-      parsedAmount * LAMPORTS_PER_SOL,
-    )
-    const { blockhash} = await connection.getLatestBlockhash();
-    const txMessage =  new TransactionMessage({
-      payerKey,
-      instructions,
-      recentBlockhash: blockhash
-    })
-    const transaction = new VersionedTransaction(txMessage.compileToV0Message());
-    const response: ActionsSpecPostResponse = {
-      transaction: Buffer.from(transaction.serialize()).toString('base64'),
-    };
-    return c.json(response, 200);
-  },
-);
+    try {
+      const transaction = await createTransaction(payerKey, parsedAmount);
+      const response: ActionsSpecPostResponse = {
+        transaction: Buffer.from(transaction.serialize()).toString('base64'),
+      };
+      return c.json(response, 200);
+    } catch (error: any) {
+      const errorResponse: ActionError = {
+        message: error.message,
+      };
+      return c.json(errorResponse, 200);
+    }
+  });
 
-function getDonateInfo(): Pick<
+async function createTransaction(payerKey: PublicKey, parsedAmount: number) {
+  const { instructions } = await depositSol(
+    connection,
+    new PublicKey(STAKE_POOL),
+    payerKey,
+    parsedAmount * LAMPORTS_PER_SOL,
+  );
+  const { blockhash } = await connection.getLatestBlockhash();
+  const txMessage = new TransactionMessage({
+    payerKey,
+    instructions,
+    recentBlockhash: blockhash,
+  });
+  const transaction = new VersionedTransaction(txMessage.compileToV0Message());
+  return transaction;
+}
+
+function getStakeInfo(): Pick<
   ActionsSpecGetResponse,
   'icon' | 'title' | 'description'
 > {
