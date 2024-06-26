@@ -137,7 +137,7 @@ app.openapi(
       const errorResponse: ActionError = {
         message: error.message,
       };
-      return c.json(errorResponse, 200);
+      return c.json(errorResponse, 422);
     }
   });
 
