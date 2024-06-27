@@ -150,6 +150,7 @@ app.openapi(
   });
 
 async function createTransaction(payerKey: PublicKey, parsedAmount: number) {
+  console.log('RPC', connection.rpcEndpoint)
   const { instructions , signers} = await depositSol(
     connection,
     new PublicKey(STAKE_POOL),
