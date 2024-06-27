@@ -132,6 +132,7 @@ app.openapi(
       const response: ActionsSpecPostResponse = {
         transaction: Buffer.from(transaction.serialize()).toString('base64'),
         message: `Staking ${parsedAmount} SOL to The Vault`,
+        redirect: "https://thevault.finance/"
       };
       return c.json(response, 200);
     } catch (error: any) {
@@ -143,7 +144,7 @@ app.openapi(
   });
 
 async function createTransaction(payerKey: PublicKey, parsedAmount: number) {
-  const { instructions } = await depositSol(
+  const { instructions , signers} = await depositSol(
     connection,
     new PublicKey(STAKE_POOL),
     payerKey,
@@ -156,6 +157,7 @@ async function createTransaction(payerKey: PublicKey, parsedAmount: number) {
     recentBlockhash: blockhash,
   });
   const transaction = new VersionedTransaction(txMessage.compileToV0Message());
+  transaction.sign(signers);
   return transaction;
 }
 
