@@ -131,7 +131,7 @@ app.openapi(
       const transaction = await createTransaction(payerKey, parsedAmount);
       const response: ActionsSpecPostResponse = {
         transaction: Buffer.from(transaction.serialize()).toString('base64'),
-        message: `Staking ${parsedAmount} SOL to The Vault`,
+        message: `Staked ${parsedAmount} SOL to The Vault`,
         redirect: "https://thevault.finance/"
       };
       return c.json(response, 200);
