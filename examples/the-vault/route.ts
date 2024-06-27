@@ -126,6 +126,12 @@ app.openapi(
       c.req.param('amount') ?? DEFAULT_STAKE_AMOUNT.toString();
     const { account } = (await c.req.json()) as ActionsSpecPostRequestBody;
     const parsedAmount = parseFloat(amount);
+    if(parsedAmount <= 0 || isNaN(parsedAmount)) {
+      const errorResponse: ActionError = {
+        message: 'Enter a valid amount',
+      };
+      return c.json(errorResponse, 422);
+    }
     const payerKey = new PublicKey(account);
     try {
       const transaction = await createTransaction(payerKey, parsedAmount);
@@ -168,7 +174,7 @@ function getStakeInfo(): Pick<
   const icon = 'https://solanavault.s3.amazonaws.com/vSolBanner.webp'
   const title = 'Stake to The Vault';
   const description =
-    'The LST of The Vault Finance, the growth focused stake pool.';
+    'The LST of The Vault Finance. The growth focused stake pool.';
   return { icon, title, description };
 }
 
