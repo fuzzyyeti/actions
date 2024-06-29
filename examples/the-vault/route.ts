@@ -18,6 +18,7 @@ import {
 } from '../../spec/actions-spec';
 import { connection, prepareTransaction } from '../transaction-utils';
 import { depositSol } from '@solana/spl-stake-pool';
+import { getValidatorInfoFromIdentityPubkey, getValidatorInfoFromVotePubkey } from './directedStake/validatorInfo';
 
 const STAKE_POOL = 'Fu9BYC6tWBo1KMKaP3CFoKfRhqv9akmy3DuYwnCyWiyC';
 const DEFAULT_STAKE_AMOUNT = '1';
@@ -47,11 +48,31 @@ app.openapi(
   (c) => {
     const { icon, title, description } = getStakeInfo();
     const { direct } = c.req.valid('query');
+    let directKey = undefined;
+    try {
+      directKey = new PublicKey(direct);
+    } catch (error) {
+      const errorResponse: ActionError = {
+        message: 'direct query string must be a valid base58 public key',
+      };
+      return c.json(errorResponse, 422);
+    }
+    const info = getValidatorInfoFromIdentityPubkey(directKey);
+    if (!info) {
+      const errorResponse: ActionError = {
+        message: 'Unable to find validator info for the provided public key',
+      };
+      return c.json(errorResponse, 422);
+    }
+    let directTitle = undefined;
+    if (info.moniker) {
+      directTitle = `Stake to The Vault - directed to ${info?.moniker}`;
+    }
     const amountParameterName = 'amount';
     const response: ActionsSpecGetResponse = {
       icon,
       label: `${DEFAULT_STAKE_AMOUNT} SOL`,
-      title,
+      title: directTitle ?? title,
       description,
       links: {
         actions: [
@@ -76,39 +97,6 @@ app.openapi(
     return c.json(response, 200);
   },
 );
-
-app.openapi(
-  createRoute({
-    method: 'get',
-    path: '/{amount}',
-    tags: ['Stake'],
-    request: {
-      params: z.object({
-        amount: z.string().openapi({
-          param: {
-            name: 'amount',
-            in: 'path',
-          },
-          type: 'number',
-          example: '1',
-        }),
-      }),
-    },
-    responses: actionsSpecOpenApiGetResponse,
-  }),
-  (c) => {
-    const amount = c.req.param('amount');
-    const { icon, title, description } = getStakeInfo();
-    const response: ActionsSpecGetResponse = {
-      icon,
-      label: `${amount} SOL`,
-      title,
-      description,
-    };
-    return c.json(response, 200);
-  },
-);
-
 
 app.openapi(
   createRoute({

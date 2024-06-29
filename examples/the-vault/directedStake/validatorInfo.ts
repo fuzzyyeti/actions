@@ -14,13 +14,16 @@ export type ValidatorInfo = {
 
 export const getValidatorInfoFromIdentityPubkey = (
   identityPubkey: PublicKey,
-): ValidatorInfo => {
+): ValidatorInfo | undefined => {
   // const validator = validators.find(
   //     (v) => v.votePubkey === votePubkey.toString(),
   // );
   const info = validatorInfo.find(
     (v: any) => v.identityPubkey === identityPubkey.toString(),
   );
+  if (!info) {
+    return undefined;
+  }
   return {
     moniker: info?.info.name ?? identityPubkey.toString(),
     pictureURL:
