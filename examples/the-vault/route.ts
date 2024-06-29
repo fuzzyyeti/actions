@@ -30,10 +30,23 @@ app.openapi(
     method: 'get',
     path: '/',
     tags: ['Stake'],
+    request: {
+      query: z.object({
+        direct: z.string().openapi({
+          param: {
+            name: 'direct',
+            in: 'query',
+            required: false,
+          },
+          type: 'string',
+        }),
+      }),
+    },
     responses: actionsSpecOpenApiGetResponse,
   }),
   (c) => {
     const { icon, title, description } = getStakeInfo();
+    const { direct } = c.req.valid('query');
     const amountParameterName = 'amount';
     const response: ActionsSpecGetResponse = {
       icon,
@@ -48,7 +61,7 @@ app.openapi(
           })),
           {
             href: `/api/stake/{${amountParameterName}}`,
-            label: 'Stake',
+            label: `Stake`,
             parameters: [
               {
                 name: amountParameterName,
