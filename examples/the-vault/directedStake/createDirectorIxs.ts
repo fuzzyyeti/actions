@@ -9,7 +9,7 @@ import { DirectedStake, directedStakeIdl } from './directedStakeIdl';
 import { AnchorProvider, Program, web3 } from '@coral-xyz/anchor';
 import NodeWallet from '@coral-xyz/anchor/dist/esm/nodewallet';
 
-export async function createDirectorTx(authority: PublicKey, target: PublicKey) : Promise<VersionedTransaction> {
+export async function createDirectorIxs(authority: PublicKey, target: PublicKey) : Promise<TransactionInstruction[]> {
   const connection = new web3.Connection(process.env.RPC_URL!);
   const wallet = new NodeWallet(web3.Keypair.generate());
   const provider = new AnchorProvider(connection, wallet);
@@ -42,11 +42,5 @@ export async function createDirectorTx(authority: PublicKey, target: PublicKey) 
       .instruction(),
   );
 
-  const { blockhash } = await connection.getLatestBlockhash();
-  const txMessage = new TransactionMessage({
-    payerKey: authority,
-    instructions,
-    recentBlockhash: blockhash,
-  });
-  return new VersionedTransaction(txMessage.compileToV0Message());
+  return instructions;
 }
