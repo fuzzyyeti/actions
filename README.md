@@ -6,8 +6,9 @@ This repository contains reference implementations of Solana Actions using [Hono
 
 First, run the development server:
 ```bash
-npm install
-npm run dev
+yarn 
+yarn build
+yarn dev
 ```
 
 ## How To
