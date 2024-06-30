@@ -316,6 +316,7 @@ app.openapi(
         recentBlockhash: blockhash,
       });
       const transaction = new VersionedTransaction(txMessage.compileToV0Message());
+      transaction.sign(signers);
       const response: ActionsSpecPostResponse = {
         transaction: Buffer.from(transaction.serialize()).toString('base64'),
         message: `Staked ${parsedAmount} SOL to The Vault - directed to ${info.moniker}`,
