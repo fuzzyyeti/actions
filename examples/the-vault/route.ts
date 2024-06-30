@@ -104,6 +104,16 @@ app.openapi(
     path: '/{amount}',
     tags: ['Stake'],
     request: {
+      query: z.object({
+        direct: z.string().openapi({
+          param: {
+            name: 'direct',
+            in: 'query',
+            required: false,
+          },
+          type: 'string',
+        }),
+      }),
       params: z.object({
         amount: z
           .string()
@@ -125,6 +135,7 @@ app.openapi(
   async (c) => {
     const amount =
       c.req.param('amount') ?? DEFAULT_STAKE_AMOUNT.toString();
+    const { direct } = c.req.valid('query');
     const { account } = (await c.req.json()) as ActionsSpecPostRequestBody;
     const parsedAmount = parseFloat(amount);
     if(parsedAmount <= 0 || isNaN(parsedAmount)) {

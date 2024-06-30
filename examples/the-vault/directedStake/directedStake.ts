@@ -3,7 +3,7 @@ import { directedStakeIdl } from './directedStakeIdl';
 
 const DIRECTED_STAKE_PROGRAM_ID = new PublicKey(directedStakeIdl.address);
 
-function findDirectorAddress(authority: PublicKey) {
+export function findDirectorAddress(authority: PublicKey) {
   const [key] = PublicKey.findProgramAddressSync(
     [new TextEncoder().encode('director'), authority.toBytes()],
     DIRECTED_STAKE_PROGRAM_ID,
