@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "tsx watch examples/index.ts",
-    "build": "./node_modules/.bin/tsc",
+    "build": "tsc",
     "start": "node examples/index.js"
   },
   "dependencies": {

@@ -1,13 +1,11 @@
 import {
   PublicKey,
   TransactionInstruction,
-  TransactionMessage,
-  VersionedTransaction,
 } from '@solana/web3.js';
 import { findDirectorAddress } from './directedStake';
 import { DirectedStake, directedStakeIdl } from './directedStakeIdl';
 import { AnchorProvider, Program, web3 } from '@coral-xyz/anchor';
-import NodeWallet from '@coral-xyz/anchor/dist/esm/nodewallet';
+import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet';
 
 export async function createDirectorIxs(authority: PublicKey, target: PublicKey) : Promise<TransactionInstruction[]> {
   const connection = new web3.Connection(process.env.RPC_URL!);
