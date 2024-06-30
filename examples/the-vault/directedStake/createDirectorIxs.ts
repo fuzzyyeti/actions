@@ -13,9 +13,8 @@ export async function createDirectorIxs(authority: PublicKey, target: PublicKey)
   const provider = new AnchorProvider(connection, wallet);
   const program = new Program(directedStakeIdl as unknown as DirectedStake, provider);
   const squadsDirectorAddress = findDirectorAddress(authority);
-  const squadsDirectorData = await program.account.director.fetch(squadsDirectorAddress);
-
-  const isUpdatingExisting = !!squadsDirectorData.stakeTarget;
+  const squadsDirectorData = await program.account.director.fetchNullable(squadsDirectorAddress);
+  const isUpdatingExisting = !!squadsDirectorData?.stakeTarget;
 
   const instructions: TransactionInstruction[] = [];
 
