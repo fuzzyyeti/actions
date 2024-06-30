@@ -1,4 +1,4 @@
-# @dialectlabs/actions
+# The Vault Blink
 
 This repository contains reference implementations of Solana Actions using [Hono](https://hono.dev/).
 
