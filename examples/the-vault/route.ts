@@ -27,6 +27,17 @@ const DEFAULT_STAKE_AMOUNT_OPTIONS = ['1', '5', '10'];
 
 const app = new OpenAPIHono();
 
+// Define your CORS options
+const corsOptions = {
+  origin: 'https://blink.thevault.finance',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+// Use the CORS middleware with the options
+app.use(cors(corsOptions));
+
 app.openapi(
   createRoute({
     method: 'get',
