@@ -20,6 +20,7 @@ import { connection, prepareTransaction } from '../transaction-utils';
 import { depositSol } from '@solana/spl-stake-pool';
 import { getValidatorInfoFromIdentityPubkey, getValidatorInfoFromVotePubkey } from './directedStake/validatorInfo';
 import { createDirectorIxs } from './directedStake/createDirectorIxs';
+import { cors } from 'hono/cors';
 
 const STAKE_POOL = 'Fu9BYC6tWBo1KMKaP3CFoKfRhqv9akmy3DuYwnCyWiyC';
 const DEFAULT_STAKE_AMOUNT = '1';
