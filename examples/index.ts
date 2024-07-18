@@ -8,7 +8,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = new OpenAPIHono();
-app.use('/*', cors());
+
+app.use(cors({
+  origin: '*',
+  allowMethods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'Content-Encoding', 'Accept-Encoding'],
+}));
+
 console.log(process.env.ENVIRONMENT);
 console.log(process.env.RPC_URL);
 
