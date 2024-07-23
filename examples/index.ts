@@ -18,6 +18,29 @@ app.use(cors({
 console.log(process.env.ENVIRONMENT);
 console.log(process.env.RPC_URL);
 
+// return an actions.json on the base url
+app.get('/actions.json', (c) => {
+  return c.json({
+    status: 200,
+    body: {
+      rules: [
+        {
+          pathPattern: "/stake",
+          apiPath: "/api/stake"
+        },
+        {
+          pathPattern: "/stake/*",
+          apiPath: "/api/stake/*"
+        },
+        {
+          pathPattern: "/stake/directed/*",
+          apiPath: "/api/stake/directed/*"
+        }
+      ]
+    }
+  });
+});
+
 // <--Actions-->
 app.route('api/stake', theVault);
 // </--Actions-->
