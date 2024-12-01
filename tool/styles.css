@@ -1,0 +1,131 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+h1 {
+    color: #ff6b00;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.validator-form {
+    background: #2d2d2d;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    border: 1px solid #ff6b00;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: #ff6b00;
+}
+
+.selection-container {
+    margin-bottom: 20px;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ff6b00;
+    border-radius: 4px;
+    background-color: #2d2d2d;
+    font-size: 16px;
+    color: #ff6b00;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select:hover {
+    border-color: #ff8533;
+    background-color: #3d3d3d;
+}
+
+select:focus {
+    outline: none;
+    border-color: #ff8533;
+    box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2);
+}
+
+select option {
+    background-color: #2d2d2d;
+    color: #ff6b00;
+    padding: 12px;
+}
+
+/* For Webkit browsers like Chrome/Safari */
+select::-webkit-listbox {
+    background-color: #2d2d2d;
+    color: #ff6b00;
+}
+
+/* For Firefox */
+select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #ff6b00;
+}
+
+select option:hover,
+select option:focus,
+select option:active,
+select option:checked {
+    background-color: #3d3d3d !important;
+    color: #ff6b00 !important;
+}
+
+#output {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #2d2d2d;
+    border-radius: 4px;
+    border-left: 4px solid #ff6b00;
+    color: #ffffff;
+}
+
+.copy-container {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.copy-button {
+    background-color: #ff6b00;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.copy-button:hover {
+    background-color: #ff8533;
+}
+
+.copy-status {
+    color: #ff6b00;
+    font-size: 14px;
+}
