@@ -58,6 +58,15 @@ app.get(
   }),
 );
 
+app.use('*' as string, async (c, next) => {
+  const host = c.req.header('host');
+  if (host === 'stake.thevault.finance') {
+    return c.redirect('http://thevault.finance');
+  }
+  return next();
+});
+
+
 const port = 3000;
 console.log(
   `Server is running on port ${port}
