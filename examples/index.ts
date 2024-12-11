@@ -60,7 +60,7 @@ app.get(
 
 app.use('*' as string, async (c, next) => {
   const host = c.req.header('host');
-  if (host === 'stake.thevault.finance') {
+  if (host === 'blink.thevault.finance') {
     return c.redirect('http://thevault.finance');
   }
   return next();
