@@ -20,9 +20,8 @@ console.log(process.env.RPC_URL);
 
 // return an actions.json on the base url
 app.get('/actions.json', (c) => {
-  return c.json({
-    status: 200,
-    body: {
+  return c.json(
+     {
       rules: [
         {
           pathPattern: "/stake",
@@ -36,9 +35,8 @@ app.get('/actions.json', (c) => {
           pathPattern: "/stake/directed/*",
           apiPath: "/api/stake/directed/*"
         }
-      ]
-    }
-  });
+     ]}
+  );
 });
 
 // <--Actions-->
