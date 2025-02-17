@@ -18,7 +18,11 @@ import {
 } from '../../spec/actions-spec';
 import { connection, prepareTransaction } from '../transaction-utils';
 import { depositSol } from '@solana/spl-stake-pool';
-import { getValidatorInfoFromIdentityPubkey, getValidatorInfoFromVotePubkey } from './directedStake/validatorInfo';
+import {
+  getValidatorInfoFromIdentityPubkey,
+  getValidatorInfoFromVotePubkey,
+  getVoteKeyFromIdentityPubkey,
+} from './directedStake/validatorInfo';
 import { createDirectorIxs } from './directedStake/createDirectorIxs';
 import { cors } from 'hono/cors';
 
@@ -105,7 +109,6 @@ app.openapi(
   (c) => {
     const { icon, title, description } = getStakeInfo();
     const target = c.req.param('target');
-    console.log('target', target);
     if(!target) {
       const errorResponse: ActionError = {
         message: 'Enter a valid target',
@@ -133,6 +136,7 @@ app.openapi(
       directTitle = `Stake to The Vault - directed to ${info?.moniker}`;
     }
     const amountParameterName = 'amount';
+    const voteAccount = getVoteKeyFromIdentityPubkey(directKey);
     const response: ActionsSpecGetResponse = {
       icon,
       label: `${DEFAULT_STAKE_AMOUNT} SOL`,
@@ -142,10 +146,10 @@ app.openapi(
         actions: [
           ...DEFAULT_STAKE_AMOUNT_OPTIONS.map((amount) => ({
             label: `${amount} SOL`,
-            href: `/api/stake/directed/${target}/${amount}`,
+            href: `/api/stake/directed/${voteAccount}/${amount}`,
           })),
           {
-            href: `/api/stake/directed/${target}/{${amountParameterName}}`,
+            href: `/api/stake/directed/${voteAccount}/{${amountParameterName}}`,
             label: `Stake`,
             parameters: [
               {
@@ -301,7 +305,7 @@ app.openapi(
       };
       return c.json(errorResponse, 422);
     }
-    const info = getValidatorInfoFromIdentityPubkey(targetKey);
+    const info = getValidatorInfoFromVotePubkey(targetKey);
     if (!info) {
       const errorResponse: ActionError = {
         message: 'Unable to find validator info for the provided public key',

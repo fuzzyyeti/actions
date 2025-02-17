@@ -36,6 +36,18 @@ export const getValidatorInfoFromIdentityPubkey = (
   };
 };
 
+export const getVoteKeyFromIdentityPubkey = (
+  identityPubkey: PublicKey,
+): PublicKey | undefined => {
+  const info = validators.validators.find(
+    (v: any) => v.identityPubkey === identityPubkey.toString(),
+  );
+  if (!info) {
+    return undefined;
+  }
+  return new PublicKey(info.voteAccountPubkey);
+};
+
 export const getValidatorInfoFromVotePubkey = (
   votePubkey: PublicKey,
 ): ValidatorInfo | undefined => {
