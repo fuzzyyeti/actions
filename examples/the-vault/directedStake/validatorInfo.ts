@@ -1,8 +1,4 @@
 import { Connection, ParsedAccountData, PublicKey } from '@solana/web3.js';
-// comes from `solana validator-info get --output json-compact | pbcopy`
-import validatorInfo from './cliValidatorInfo.json';
-// comes from `solana validators --output json|pbcopy`
-import validators from './cliValidators.json';
 
 import { stakePoolInfo } from '@solana/spl-stake-pool';
 
@@ -12,12 +8,62 @@ export type ValidatorInfo = {
   identityPubkey: string | null;
 };
 
-export const getValidatorInfoFromIdentityPubkey = (
+// Cache for validator data to avoid repeated fetches
+let cachedValidatorInfo: any[] | null = null;
+let cachedValidators: any | null = null;
+let lastFetchTime = 0;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Fetch validator info from GitHub repository
+async function fetchValidatorInfo(): Promise<any[]> {
+  const now = Date.now();
+  if (cachedValidatorInfo && now - lastFetchTime < CACHE_DURATION) {
+    return cachedValidatorInfo;
+  }
+
+  try {
+    const response = await fetch(
+      "https://raw.githubusercontent.com/SolanaVault/vault-lst-list-generator/refs/heads/main/validatorInfo.json"
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch validator info: ${response.status}`);
+    }
+    cachedValidatorInfo = await response.json();
+    lastFetchTime = now;
+    return cachedValidatorInfo || [];
+  } catch (error) {
+    console.error('Error fetching validator info:', error);
+    return cachedValidatorInfo || [];
+  }
+}
+
+// Fetch validators from GitHub repository
+async function fetchValidators(): Promise<any> {
+  const now = Date.now();
+  if (cachedValidators && now - lastFetchTime < CACHE_DURATION) {
+    return cachedValidators;
+  }
+
+  try {
+    const response = await fetch(
+      "https://raw.githubusercontent.com/SolanaVault/vault-lst-list-generator/refs/heads/main/validators.json"
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch validators: ${response.status}`);
+    }
+    cachedValidators = await response.json();
+    lastFetchTime = now;
+    return cachedValidators;
+  } catch (error) {
+    console.error('Error fetching validators:', error);
+    return cachedValidators || { validators: [] };
+  }
+}
+
+export const getValidatorInfoFromIdentityPubkey = async (
   identityPubkey: PublicKey,
-): ValidatorInfo | undefined => {
-  // const validator = validators.find(
-  //     (v) => v.votePubkey === votePubkey.toString(),
-  // );
+): Promise<ValidatorInfo | undefined> => {
+  const validatorInfo = await fetchValidatorInfo();
   const info = validatorInfo.find(
     (v: any) => v.identityPubkey === identityPubkey.toString(),
   );
@@ -36,9 +82,10 @@ export const getValidatorInfoFromIdentityPubkey = (
   };
 };
 
-export const getVoteKeyFromIdentityPubkey = (
+export const getVoteKeyFromIdentityPubkey = async (
   identityPubkey: PublicKey,
-): PublicKey | undefined => {
+): Promise<PublicKey | undefined> => {
+  const validators = await fetchValidators();
   const info = validators.validators.find(
     (v: any) => v.identityPubkey === identityPubkey.toString(),
   );
@@ -48,9 +95,10 @@ export const getVoteKeyFromIdentityPubkey = (
   return new PublicKey(info.voteAccountPubkey);
 };
 
-export const getValidatorInfoFromVotePubkey = (
+export const getValidatorInfoFromVotePubkey = async (
   votePubkey: PublicKey,
-): ValidatorInfo | undefined => {
+): Promise<ValidatorInfo | undefined> => {
+  const validators = await fetchValidators();
   // Find the current validator info
   const currentValidatorIdentityPubkey = validators.validators.find((v: any) =>
     new PublicKey(v.voteAccountPubkey).equals(votePubkey),

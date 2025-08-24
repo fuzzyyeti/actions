@@ -106,8 +106,7 @@ app.openapi(
     },
     responses: actionsSpecOpenApiGetResponse,
   }),
-  (c) => {
-    const { icon, title, description } = getStakeInfo();
+  async (c) => {
     const target = c.req.param('target');
     if(!target) {
       const errorResponse: ActionError = {
@@ -124,19 +123,20 @@ app.openapi(
       };
       return c.json(errorResponse, 422);
     }
-    const info = getValidatorInfoFromIdentityPubkey(directKey);
+    const info = await getValidatorInfoFromIdentityPubkey(directKey);
     if (!info) {
       const errorResponse: ActionError = {
         message: 'Unable to find validator info for the provided public key',
       };
       return c.json(errorResponse, 422);
     }
+    const { icon, title, description } = getStakeInfo();
     let directTitle = undefined;
     if (info.moniker) {
       directTitle = `Stake to The Vault - directed to ${info?.moniker}`;
     }
     const amountParameterName = 'amount';
-    const voteAccount = getVoteKeyFromIdentityPubkey(directKey);
+    const voteAccount = await getVoteKeyFromIdentityPubkey(directKey);
     const response: ActionsSpecGetResponse = {
       icon,
       label: `${DEFAULT_STAKE_AMOUNT} SOL`,
@@ -305,7 +305,7 @@ app.openapi(
       };
       return c.json(errorResponse, 422);
     }
-    const info = getValidatorInfoFromVotePubkey(targetKey);
+    const info = await getValidatorInfoFromVotePubkey(targetKey);
     if (!info) {
       const errorResponse: ActionError = {
         message: 'Unable to find validator info for the provided public key',
